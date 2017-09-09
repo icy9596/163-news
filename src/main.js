@@ -5,8 +5,9 @@ import App from './App';
 import VueRouter from 'vue-router';
 import VueResource from 'vue-resource';
 import VueScroller from 'vue-scroller';
+import VueLazyLoad from 'vue-lazyload';
 
-import './lib/css/animate.css';
+// import './lib/css/animate.css';
 
 import { ToastPlugin } from 'vux';
 Vue.use(ToastPlugin);
@@ -15,6 +16,7 @@ Vue.config.productionTip = false;
 Vue.use(VueRouter);
 Vue.use(VueResource);
 Vue.use(VueScroller);
+Vue.use(VueLazyLoad);
 
 /* eslint-disable no-new */
 new Vue({

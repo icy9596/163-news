@@ -12,6 +12,12 @@ import game from '../../components/game/game';
 import discover from '../../components/discover/discover';
 import setting from '../../components/setting/setting';
 
+// 新闻详情
+import newDetail from '../../components/news/new-detail';
+
+// 图集
+import photoView from '../../components/photo/photoview';
+
 let routes = [
     {
         path: '/',
@@ -27,7 +33,10 @@ let routes = [
             },
             {
                 path: 'index',
-                component: index
+                component: index,
+                meta: {
+                    keepAlive: false
+                }
             },
             {
                 path: 'inland',
@@ -40,6 +49,16 @@ let routes = [
             {
                 path: 'cart',
                 component: cart
+            },
+            {
+                path: ':docId',
+                components: {
+                    default: index,
+                    newDetail: newDetail
+                },
+                meta: {
+                    keepAlive: false
+                }
             }
         ]
     },
@@ -54,6 +73,10 @@ let routes = [
     {
         path: '/setting',
         component: setting
+    },
+    {
+        path: '/photoview/:id',
+        component: photoView
     }
 ];
 

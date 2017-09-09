@@ -8,9 +8,7 @@
       </XHeader>
       
       <div class="content">
-        <transition enter-active-class="animated fadeIn" leave-active-class="animated fadeOut">
-          <router-view></router-view>
-        </transition>
+        <router-view></router-view>
       </div>
 
       <!-- 底部按钮 -->
@@ -83,9 +81,11 @@ html,body {
   }
 
   .content {
+    width: 100%;
     height: 100%;
     box-sizing: border-box;
     padding-top: 46px;
+    overflow: hidden;
   }
 
   .footer {
@@ -95,6 +95,16 @@ html,body {
     width: 100%;
     z-index: 999;
   }
+
+  /* .slide-enter-active, .slide-leave-active {
+    transition: transform 0.3s;
+  }
+  .slide-enter {
+    transform: translate3d(100%, 0, 0);
+  }
+  .slide-leave-to {
+    transform: translate3d(-100%, 0, 0);
+  } */
 }
 
 </style>

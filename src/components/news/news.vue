@@ -14,11 +14,8 @@
                 </tab>
             </Scroller>
         </div>
-
-         <transition enter-active-class="animated zoomInRight" leave-active-class="animated zoomOutLeft"> 
-            <router-view></router-view>
-         </transition> 
-        
+        <router-view></router-view>
+        <router-view name="newDetail"></router-view>
     </div>
 </template>
 
