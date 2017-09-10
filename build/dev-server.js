@@ -23,6 +23,91 @@ var proxyTable = config.dev.proxyTable
 var app = express()
 var compiler = webpack(webpackConfig)
 
+let cheerio = require('cheerio');
+let request = require('request');
+
+app.use('/api', (function(){
+  let router = express.Router();
+
+  // 获取新闻内容
+  router.get('/getNewDetail/:docId', (req, res, next) => {
+    let docId = req.params.docId;
+    let url = `http://3g.163.com/all/article/${docId}.html`
+    request(url, (err, response, body) => {
+      if (!err && response.statusCode == 200) {
+        let $ = cheerio.load(body);
+        let result = {
+          title: '',
+          info: '',
+          content: '',
+          imgs: []
+        }
+
+        let photos = $('.photo img');
+        photos.each((i, v) => {
+          v = $(v);
+          let src = v.attr('data-src');
+          let alt = v.attr('alt');
+          result.imgs.push({
+            src: src,
+            alt: alt
+          });
+        });
+        
+        let video = $('video');
+        let vSrc = video.attr('data-src');
+        video.attr('src', vSrc);
+
+        let contents = $('.page p');
+        contents.each((i, v) => {
+          let content = $(v).text();
+          result.content += `<p>${content}</p>`;
+        });
+
+        result.title = $('h1.title').text();
+        result.info = $('.info').html();
+
+        res.json(result);
+      }
+
+      next();
+    });
+  });
+  // 获取新闻结束
+
+  // 获取图集内容
+  router.get('/getPhoto/:id', (req, res, next) => {
+    let typeIdArr = req.params.id.split('|');
+    let url = `https://3g.163.com/photo/photoview/${typeIdArr[0]}/${typeIdArr[1]}.html`;
+
+    request(url, (err, response, body) => {
+      if (!err && response.statusCode === 200) {
+        let data = {
+          title: '',
+          imgs: []
+        }
+        let $ = cheerio.load(body);
+        data.title = $('h1.album_title').text();
+        let imgsItem = $('.photo_list .img-wrap');
+        imgsItem.each((i, item) => {
+          item = $(item);
+          data.imgs.push({
+            src: item.find('img').attr('data-src'),
+            note: item.find('.note').text()
+          });
+        });
+
+        res.json(data);
+
+        next();
+      }
+    });
+  });
+  // 获取图集内容结束
+
+  return router;
+})());
+
 var devMiddleware = require('webpack-dev-middleware')(compiler, {
   publicPath: webpackConfig.output.publicPath,
   quiet: true

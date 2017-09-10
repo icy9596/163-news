@@ -2,14 +2,12 @@
     <transition name="slide"> 
         <div class="new-detail-wrap" ref="detail">
             <div class="new-detail">
-                <div class="back">
-                    <span class="btn" @click="back">返回</span>
-                    <span class="text">新闻详情</span>
-                </div>
                 <div class="title">
                     <h2>{{detail.title}}</h2>
                 </div>
                 <div class="info" v-html="detail.info"></div>
+
+                <!-- 轮播图 -->
                 <div class="slide-img-wrap" ref="slideWrap">
                     <ul class="slide-img" ref="slide">
                         <li class="img" v-for="(item, index) in detail.imgs" :key="index">
@@ -21,10 +19,29 @@
                         <span>{{slideCurrentIndex}} / {{detail.imgs.length}}</span>
                     </div>
                 </div>
+
+                <!-- 新闻内容 -->
                 <div class="detail-content" v-html="detail.content"></div>
+
+                <!-- 评论区域 -->
+                <div class="comment-wrap">
+                    <div class="title">热门跟帖</div>
+                    <ul class="comments" v-if="comments.length">
+                        <li class="comment-item" v-for="(item, i) in comments" :key="i">
+                            <div class="name">{{`${item.nickname}[网易${item.location}手机网友]`}}</div>
+                            <p class="text">{{item.content}}</p>
+                            <div class="vote"><span class="count">{{item.vote}}</span> 顶</div>
+                        </li>
+                    </ul>
+                    <div class="placeholder" v-if="!comments.length">目前没有跟帖，欢迎您发表观点。</div>
+                </div>
 
                 <Panel :header="'热门推荐'" :list="panelList" type="5"></Panel>
                 <Loading v-model="loading" :text="'正在加载 ...'"></Loading>
+            </div>
+            <div class="back">
+                <span class="btn" @click="back">返回</span>
+                <span class="text">新闻详情</span>
             </div>
         </div>
     </transition> 
@@ -39,6 +56,7 @@
             return {
                 detail: {},
                 panelList: [],
+                comments: [],
                 loading: false,
                 slideCurrentIndex: 1
             };
@@ -86,6 +104,28 @@
 
                         this.$nextTick(() => {
                             this.scroll && this.scroll.refresh();
+                        });
+                    }
+                });
+            },
+            getComment () {
+                let docId = this.$route.params.docId;
+                let url = `http://comment.news.163.com/api/v1/products/a2869674571f77b5a0867c3d71db5856/threads/${docId}/comments/hotList`;
+                this.$http.jsonp(url).then(res => {
+                    if (res.status === 200) {
+                        console.log(res);
+                        let temp = [];
+                        let comments = res.body.comments;
+                        for (let x in comments) {
+                            temp.push(comments[x]);
+                        }
+                        this.comments = temp.map((item, i) => {
+                            return {
+                                location: item.user.location,
+                                nickname: item.user.nickname || '',
+                                vote: item.vote,
+                                content: item.content
+                            };
                         });
                     }
                 });
@@ -142,6 +182,9 @@
             this._initScroll();
             this.getDetail();
             this.getHotNews();
+        },
+        created () {
+            this.getComment();
         }
     };
 </script>
@@ -164,8 +207,53 @@
             background-color: #fff;
             overflow: hidden;
 
+            .back {
+                position: fixed;
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: 44px;
+                line-height: 44px;
+                text-align: center;
+                font-size: 18px;
+                background-color: #35495e;
+                color: #fff;
+                &::after {
+                    content: '';
+                    position: absolute;
+                    left: 0;
+                    bottom: -2px;
+                    width: 100%;
+                    height: 0;
+                    /* border-bottom: 1px solid #35495e;
+                    @media (-webkit-min-device-pixel-ratio: 1.5),(min-device-pixel-ratio: 1.5){
+                        transform: scaleY(0.7);
+                    }
+                    @media (-webkit-min-device-pixel-ratio: 2),(min-device-pixel-ratio: 2) {
+                        transform: scaleY(0.5);
+                    }
+                    @media (-webkit-min-device-pixel-ratio: 3),(min-device-pixel-ratio: 3){
+                        transform: scaleY(0.3);
+                    } */
+                }
+                .btn {
+                    position: absolute;
+                    left: 0;
+                    top: 50%;
+                    transform: translateY(-50%);
+                    border-radius:8px;
+                    color: #fff;
+                    padding: 0 10px;
+                    background-color: #35495e;
+                }
+
+                .text {
+                    font-weight: bold;
+                    font-size: 22px;
+                }
+            }
             .new-detail {
-                padding: 10px;
+                padding: 44px 10px 10px 10px;
 
                 .slide-img-wrap {
                     overflow: hidden;
@@ -206,48 +294,6 @@
                         text-align: center;
                     }
                 }
-
-                .back {
-                    position: relative;
-                    text-align: center;
-                    font-size: 18px;
-                    color: #35495e;
-                    &::after {
-                        content: '';
-                        position: absolute;
-                        left: 0;
-                        bottom: -2px;
-                        width: 100%;
-                        height: 0;
-                        /* border-bottom: 1px solid #35495e;
-                        @media (-webkit-min-device-pixel-ratio: 1.5),(min-device-pixel-ratio: 1.5){
-                            transform: scaleY(0.7);
-                        }
-                        @media (-webkit-min-device-pixel-ratio: 2),(min-device-pixel-ratio: 2) {
-                            transform: scaleY(0.5);
-                        }
-                        @media (-webkit-min-device-pixel-ratio: 3),(min-device-pixel-ratio: 3){
-                            transform: scaleY(0.3);
-                        } */
-                    }
-
-                    .btn {
-                        position: absolute;
-                        left: 0;
-                        top: 50%;
-                        transform: translateY(-50%);
-                        border-radius:8px;
-                        color: #fff;
-                        padding: 0 10px;
-                        background-color: #35495e;
-                    }
-
-                    .text {
-                        font-weight: bold;
-                        font-size: 22px;
-                    }
-                }
-
                 .detail-content {
                     .video, .photo {
                         width: 100%;
@@ -266,16 +312,55 @@
                         text-indent: 2em;
                     }
                 }
-                
                 .info {
                     font-size: 14px;
                     color: #888;
                     margin: 8px 0;
                 }
-
                 .weui-media-box__hd, .weui-media-box__hd img {
                     width: 102px;
                     height: 78px;
+                }
+                .comment-wrap {
+                    padding: 10px 0;
+                    border-top: 1px solid #ddd;
+                    .title {
+                        font-size: 20px;
+                        line-height: 20px;
+                        height: 20px;
+                        color: #f33;
+                    }
+                    .comments {
+                        .comment-item {
+                            position: relative;
+                            color: #404040;
+                            padding: 20px 0;
+                            border-bottom: 1px solid #ddd;
+                            &:last-child {
+                                border: none;
+                            }
+                            .name {
+                                margin-bottom: 5px;
+                                color: #4c9aea;
+                                font-size: 18px;
+                            }
+                            .text {
+                                font-size: 18px;
+                            }
+                            .vote {
+                                position: absolute;
+                                top:10px;
+                                right: 0;
+
+                                .count {
+                                    font-size:22px;
+                                }
+                            }
+                        }
+                    }
+                    .placeholder {
+                        padding: 10px 0;
+                    }
                 }
             }
         }
