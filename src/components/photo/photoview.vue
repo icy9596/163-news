@@ -44,6 +44,8 @@
                 this.$http.get(`/api/getPhoto/${id}`).then(res => {
                     if (res.status === 200) {
                         this.photoData = res.body;
+
+                        document.title = this.photoData.title;
                     }
                 });
             },

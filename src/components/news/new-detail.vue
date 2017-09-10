@@ -65,7 +65,6 @@
             getDetail () {
                 let docId = this.$route.params.docId;
                 let url = `/api/getNewDetail/${docId}`;
-                // this.loading = true;
                 this.$http.get(url).then(res => {
                     if (res.status === 200) {
                         this.detail = res.body;
@@ -79,6 +78,9 @@
                                 this._initSlide();
                             }
                         });
+
+                        // 文档标题
+                        document.title = this.detail.title;
                     }
                 });
             },
@@ -113,7 +115,6 @@
                 let url = `http://comment.news.163.com/api/v1/products/a2869674571f77b5a0867c3d71db5856/threads/${docId}/comments/hotList`;
                 this.$http.jsonp(url).then(res => {
                     if (res.status === 200) {
-                        console.log(res);
                         let temp = [];
                         let comments = res.body.comments;
                         for (let x in comments) {

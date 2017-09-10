@@ -35,7 +35,8 @@ let routes = [
                 path: 'index',
                 component: index,
                 meta: {
-                    keepAlive: false
+                    keepAlive: false,
+                    title: '网易 - 头条新闻'
                 }
             },
             {
@@ -57,31 +58,48 @@ let routes = [
                     newDetail: newDetail
                 },
                 meta: {
-                    keepAlive: false
+                    keepAlive: false,
+                    title: '新闻详情'
                 }
             }
         ]
     },
     {
         path: '/game',
-        component: game
+        component: game,
+        meta: {
+            title: '游戏'
+        }
     },
     {
         path: '/discover',
-        component: discover
+        component: discover,
+        meta: {
+            title: '发现'
+        }
     },
     {
         path: '/setting',
-        component: setting
+        component: setting,
+        meta: {
+            title: '设置'
+        }
     },
     {
         path: '/photoview/:id',
-        component: photoView
+        component: photoView,
+        meta: {
+            title: '图集'
+        }
     }
 ];
 
 let router = new VueRouter({
     routes
+});
+
+router.afterEach($route => {
+    document.title = $route.meta.title;
 });
 
 export default router;
