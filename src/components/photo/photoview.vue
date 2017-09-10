@@ -130,7 +130,8 @@
                 margin-bottom: 18px;
                 font-size: 18px;
                 font-weight: normal;
-                line-height: 18px;
+                line-height: 22px;
+                padding: 0 50px 0 0;
             }
             .note {
                 display: -webkit-box;

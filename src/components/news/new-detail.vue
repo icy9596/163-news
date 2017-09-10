@@ -28,9 +28,11 @@
                     <div class="title">热门跟帖</div>
                     <ul class="comments" v-if="comments.length">
                         <li class="comment-item" v-for="(item, i) in comments" :key="i">
-                            <div class="name">{{`${item.nickname}[网易${item.location}手机网友]`}}</div>
+                            <div class="top clearfix">
+                                <div class="name">{{`${item.nickname}[网易${item.location}手机网友]`}}</div>
+                                <div class="vote"><span class="count">{{item.vote}}</span> 顶</div>
+                            </div>
                             <p class="text">{{item.content}}</p>
-                            <div class="vote"><span class="count">{{item.vote}}</span> 顶</div>
                         </li>
                     </ul>
                     <div class="placeholder" v-if="!comments.length">目前没有跟帖，欢迎您发表观点。</div>
@@ -260,6 +262,8 @@
                     overflow: hidden;
 
                     .slide-img {
+                        display: flex;
+                        align-items: center;
                         white-space: nowrap;
 
                         .img {
@@ -340,21 +344,36 @@
                             &:last-child {
                                 border: none;
                             }
-                            .name {
-                                margin-bottom: 5px;
-                                color: #4c9aea;
-                                font-size: 18px;
-                            }
                             .text {
-                                font-size: 18px;
+                                font-size: 14px;
                             }
-                            .vote {
-                                position: absolute;
-                                top:10px;
-                                right: 0;
-
-                                .count {
-                                    font-size:22px;
+                            .top {
+                                &.clearfix {
+                                    &:after {
+                                        content: '';
+                                        display: block;
+                                        height: 0;
+                                        visibility: hidden;
+                                        clear: both;
+                                    }
+                                }
+                                .name {
+                                    float: left;
+                                    margin-bottom: 5px;
+                                    width: 70%;
+                                    height: 24px;
+                                    overflow: hidden;
+                                    text-overflow: ellipsis;
+                                    white-space: nowrap;
+                                    line-height: 24px;
+                                    font-size: 16px;
+                                    color: #4c9aea;
+                                }
+                                .vote {
+                                    float: right;
+                                    .count {
+                                        font-size:16px;
+                                    }
                                 }
                             }
                         }
